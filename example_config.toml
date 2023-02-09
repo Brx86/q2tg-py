@@ -1,0 +1,18 @@
+# 日志格式
+log_format = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{message}</level>"
+# 日志等级
+log_level = "INFO"
+# gocqhttp 的正向 websocket 地址与端口，形如 ws://ip:port
+qq_ws = "ws://127.0.0.1:6666"
+# gocqhttp 的正向 http 地址与端口，形如 http://ip:port
+qq_http = "http://127.0.0.1:6665"
+# telegram 的 api 地址，可填写为自建或反代地
+tg_api = "https://ayatale.eu.org/https://api.telegram.org/bot"
+# telegram 机器人的 token
+tg_token = "0123456789:AAGCE1l6HPeLRQcBTHEsrqXwWKxKsDOFpXI"
+[forward]
+# 以下为需要转发的列表，格式为 qq号/群号 = "telegram chat_id"
+[forward.u]
+12345678 = "-1001885125595" # 测试私聊
+[forward.g]
+123456789 = "-1001889844595" # 测试群
