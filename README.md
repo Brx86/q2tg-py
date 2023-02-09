@@ -1,6 +1,6 @@
 # Q2TG-py
 
-QQ 群与 Telegram 群相互转发的桥接机器人，但 telegram 群里只有机器人和用户。受 [Clansty/Q2TG](https://github.com/Clansty/Q2TG) 启发。
+QQ 群与 Telegram 群相互转发的桥接机器人，但 telegram 群里只有机器人和用户本人，适合单人使用。受 [Clansty/Q2TG](https://github.com/Clansty/Q2TG) 启发。
 
 ## 如何部署
 
@@ -12,7 +12,7 @@ python == 3.10
     pip install -r requirements.txt
     ```
 2. 运行一个 [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/releases/latest) 实例，配置文件可参考 `bot/example_config.yml`
-3. 参考 `example_config.toml` ，配置一个 `config.toml`
+3. 参考 `example_config.toml` ，填写 `config.toml`
 4. 开始运行
     ```bash
     python main.py
