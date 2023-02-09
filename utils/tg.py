@@ -31,10 +31,10 @@ class Tbot:
             m (Message): 传入的消息模型
         """
         if m.text == "/chatid":
-            logger.warning("Telegram: Get ID: {}", m.chat_id)
+            logger.warning("Chat ID: {}", m.chat_id)
             await bot.send_message(
                 m.chat_id,
-                f"`{m.chat_id}`",
+                f"chat id: `{m.chat_id}`",
                 parse_mode="MarkdownV2",
             )
         elif m.chat_id in conf.forward.g:
@@ -55,8 +55,8 @@ class Tbot:
                     q = await updater.start_polling(timeout=20, read_timeout=5)
                     while True:
                         update: Update = await q.get()
-                        if update.message and update.message.chat_id in conf.forward.a:
-                            await self.on_message(bot, update.message)
+                        if update.message:
+                            asyncio.create_task(self.on_message(bot, update.message))
         except RuntimeError:
             await updater.stop()  # type:ignore
 
