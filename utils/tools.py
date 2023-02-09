@@ -68,8 +68,8 @@ class Database:
     def get_qq_msgid(self, msgid: tuple[int, int]) -> int:
         return self.tg[msgid]
 
-    def get_tg_msgid(self, msgid: int) -> tuple[int, int]:
-        return self.qq[msgid]
+    def get_tg_msgid(self, msgid: str) -> tuple[int, int]:
+        return self.qq[int(msgid)]
 
 
 db = Database()
