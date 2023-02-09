@@ -1,6 +1,6 @@
 # Q2TG-py
 
-QQ 群与 Telegram 群相互转发的桥接机器人，但 telegram 群里只有机器人和用户本人，适合单人使用。受 [Clansty/Q2TG](https://github.com/Clansty/Q2TG) 启发。
+QQ 群与 Telegram 群相互转发的桥接机器人，适合tg重度用户单独使用。受 [Clansty/Q2TG](https://github.com/Clansty/Q2TG) 启发。
 
 ## 如何部署
 
