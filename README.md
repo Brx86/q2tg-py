@@ -12,7 +12,7 @@ python == 3.10
     pip install -r requirements.txt
     ```
 2. 运行一个 [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/releases/latest) 实例，配置文件可参考 `bot/example_config.yml`
-3. 参考 `example_config.toml` ，填写 `config.toml`
+3. 参考 `example_config.toml` ，填写 `config.toml` （如果不知道群的 ID，可以先不配置转发匹配，运行 bot，在需要查询 ID 的 TG 群里发送 /chatid 指令即可获得 ID）
 4. 开始运行
     ```bash
     python main.py
@@ -39,3 +39,16 @@ python == 3.10
 - [ ] 转发多条消息记录
 - [ ] TG 编辑消息（撤回再重发）
 - [ ] 双向撤回消息
+
+## 其他大饼
+- [ ] 所有私聊转发到同一个群
+- [ ] 动图与 Sticker 转码发送
+- [ ] 解析 Bilibili 分享卡片
+- [ ] 同时连接多个 go-cqhttp 实现多账号统一收发
+- [ ] 待补充
+
+## 效果展示
+![图1](https://user-images.githubusercontent.com/44391900/217712338-68e5da98-a2ba-4ab3-829a-709dddf03e7b.jpg)
+
+## 我的状态
+![图片](https://user-images.githubusercontent.com/44391900/217711971-7fc9d25e-2c7d-4f9a-bbe9-b48bba2b65d8.png)
