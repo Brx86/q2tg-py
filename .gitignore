@@ -1,4 +1,9 @@
-test*
-.env
 venv
+log.txt
+test*
 .history
+config.toml
+bot/*
+logs/*
+utils/__pycache__
+!bot/example_config.yml
