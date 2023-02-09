@@ -76,7 +76,7 @@ class Tbot:
         """
         msg_list = []
         if m.reply_to_message:
-            reply_id = db.get_qq_msgid((m.chat_id, m.reply_to_message.message_id))
+            reply_id = db.get_qq_msgid((m.reply_to_message.message_id, m.chat_id))
             msg_list.append(Msg.reply(reply_id))
         if m.text:
             msg_list.append(Msg.text(m.text))
