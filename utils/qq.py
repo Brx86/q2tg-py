@@ -82,6 +82,7 @@ class Qbot:
                 logger.warning("Connection closed, retrying in 5 seconds...")
             await asyncio.sleep(5)
 
+    @logger.catch
     async def forward_to_tg(self, chat_id: int, d: DataModel):
         """将消息转发到 telegram 群
 
