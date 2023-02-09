@@ -11,7 +11,7 @@ python == 3.10
     source venv/bin/activate
     pip install -r requirements.txt
     ```
-2. 运行一个 `go-cqhttp` 实例，配置文件可参考 `bot/example_config.yml`
+2. 运行一个 [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/releases/latest) 实例，配置文件可参考 `bot/example_config.yml`
 3. 参考 `example_config.toml` ，配置一个 `config.toml`
 4. 开始运行
     ```bash
