@@ -48,17 +48,14 @@ class Tbot:
     async def start(self):
         """运行bot，接受并处理消息"""
         self.qq = Qbot(conf.qq_ws, conf.qq_http)
-        try:
-            async with Bot(token=self.bot_token, base_url=self.base_url) as bot:
-                self.bot = bot
-                async with (updater := Updater(bot, asyncio.Queue())):
-                    q = await updater.start_polling(timeout=20, read_timeout=5)
-                    while True:
-                        update: Update = await q.get()
-                        if update.message:
-                            asyncio.create_task(self.on_message(bot, update.message))
-        except RuntimeError:
-            await updater.stop()  # type:ignore
+        async with Bot(token=self.bot_token, base_url=self.base_url) as bot:
+            self.bot = bot
+            async with (updater := Updater(bot, asyncio.Queue())):
+                q = await updater.start_polling(timeout=20, read_timeout=5)
+                while True:
+                    update: Update = await q.get()
+                    if update.message:
+                        asyncio.create_task(self.on_message(bot, update.message))
 
     @logger.catch
     async def forward_to_qq(
