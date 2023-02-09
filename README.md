@@ -1,6 +1,6 @@
 # Q2TG-py
 
-QQ 群与 Telegram 群相互转发的 bot , 适合希望用 Telegram 替代部分 QQ 功能的用户。受 [Clansty/Q2TG](https://github.com/Clansty/Q2TG) 启发。
+QQ 群与 Telegram 群相互转发的桥接机器人，但 telegram 群里只有机器人和用户。受 [Clansty/Q2TG](https://github.com/Clansty/Q2TG) 启发。
 
 ## 如何部署
 
