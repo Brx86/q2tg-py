@@ -6,8 +6,8 @@ log_level = "INFO"
 qq_ws = "ws://127.0.0.1:6666"
 # gocqhttp 的正向 http 地址与端口，形如 http://ip:port
 qq_http = "http://127.0.0.1:6665"
-# telegram 的 api 地址，可填写为自建或反代地
-tg_api = "https://ayatale.eu.org/https://api.telegram.org/bot"
+# telegram 的 api 地址，可填写为自建或反代地址
+tg_api = "https://api.telegram.org/bot"
 # telegram 机器人的 token
 tg_token = "0123456789:AAGCE1l6HPeLRQcBTHEsrqXwWKxKsDOFpXI"
 [forward]
