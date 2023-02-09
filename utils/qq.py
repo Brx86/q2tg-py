@@ -92,7 +92,7 @@ class Qbot:
         """
         if d.message:
             text, reply_id, imgs = "", None, []  # type:ignore
-            name = d.sender.card or d.sender.nickname  # type:ignore
+            name = escaped_md(d.sender.card or d.sender.nickname)  # type:ignore
             for msg in d.message:
                 match msg.type:
                     case "at":
@@ -140,15 +140,15 @@ class Qbot:
                     await self.tg.send_message(
                         chat_id=chat_id,
                         reply_to_message_id=reply_id,
-                        text=f"*{escaped_md(name)}*:\n{escaped_md(text)}",
+                        text=f"*{name}*:\n{escaped_md(text)}",
                         parse_mode="MarkdownV2",
                     )
                 ).message_id
                 db.set((msg_id_tg, chat_id), d.message_id)  # type:ignore
         elif d.file:
-            name = escaped_md(d.file.name)
             size = escaped_md(f"{d.file.size/1048576:.2f}")
-            text = f"大小: {size}MB\n文件: [{(name)}]({d.file.url})"
+            file_name = escaped_md(d.file.name)
+            text = f"大小: {size}MB\n文件: [{(file_name)}]({d.file.url})"
             print(
                 await self.tg.send_message(
                     chat_id=chat_id,

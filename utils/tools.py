@@ -20,7 +20,7 @@ logger.add(sys.stderr, colorize=True, format=conf.log_format, level=conf.log_lev
 logger.add(base_dir / f"logs/{time.strftime('%Y-%m-%d')}.log", enqueue=True)
 
 
-def escaped_md(text: str) -> str:
+def escaped_md(text: str = "") -> str:
     escape_chars = r"\_*[]()~`>#+-=|{}.!"
     return re.sub(f"([{re.escape(escape_chars)}])", r"\\\1", text)
 
