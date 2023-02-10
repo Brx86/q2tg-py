@@ -39,11 +39,11 @@ class Tbot:
                 parse_mode="MarkdownV2",
             )
         elif m.chat_id in conf.forward.g:
-            logger.info("T->Qg: {}", m.text)
-            await self.forward_to_qq(m, group_id=conf.forward.g[m.chat_id], edit=edit)
+            logger.info("-> Group {}: {}", g := conf.forward.g[m.chat_id], m.text)
+            await self.forward_to_qq(m, group_id=g, edit=edit)
         elif m.chat_id in conf.forward.u:
-            logger.info("T->Qu: {}", m.text)
-            await self.forward_to_qq(m, user_id=conf.forward.u[m.chat_id], edit=edit)
+            logger.info("-> User {}: {}", u := conf.forward.u[m.chat_id], m.text)
+            await self.forward_to_qq(m, user_id=u, edit=edit)
 
     @logger.catch
     async def start(self):
@@ -82,8 +82,8 @@ class Tbot:
         """
         if edit:
             msg_id_qq = db.get_qq_msgid((m.message_id, m.chat_id))
-            logger.debug(await self.qq.delete_msg(message_id=msg_id_qq))
-            logger.debug("删除消息：{}:{}", m.message_id, msg_id_qq)
+            if (await self.qq.delete_msg(message_id=msg_id_qq))["retcode"] == 0:
+                logger.debug("Delete：{}:{}", m.message_id, msg_id_qq)
             if m.text.startswith("/rm "):
                 return
         msg_list = await self.create_msg_list(m)
