@@ -69,7 +69,7 @@ class Qbot:
         """websocket client，连接 gocqhttp 的服务端"""
         async with connect(self.ws) as ws:
             if "meta_event_type" in json.loads(await ws.recv()):
-                logger.info(f"Connected to {self.ws}")
+                logger.success("Successful connection to '{}'", self.ws)
             async for message in ws:
                 asyncio.create_task(self.on_message(message))
 
