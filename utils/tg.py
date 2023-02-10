@@ -74,6 +74,31 @@ class Tbot:
             user_id (int | None, optional): 要发送的用户id，默认为 None
             group_id (int | None, optional): 要发送的群id，默认为 None
         """
+        msg_list = await self.create_msg_list(m)
+        db.sent_time = int(time())
+        msg_id_qq: int = (
+            (
+                await self.qq.send_msg(
+                    message=msg_list,
+                    user_id=user_id,
+                    group_id=group_id,
+                )
+            )
+            .get("data", {})
+            .get("message_id", 0)
+        )
+        db.set((m.message_id, m.chat_id), msg_id_qq)
+
+    @logger.catch
+    async def create_msg_list(self, m: Message) -> list[dict]:
+        """生成要发送的消息列表
+
+        Args:
+            m (Message): 传入的消息模型
+
+        Returns:
+            list[dict]: 生成的消息列表
+        """
         msg_list = []
         if m.reply_to_message:
             reply_id = db.get_qq_msgid((m.reply_to_message.message_id, m.chat_id))
@@ -98,20 +123,7 @@ class Tbot:
                 msg_list.append(Msg.video(video_url))
         if m.caption:
             msg_list.append(Msg.text(m.caption))
-        logger.debug("Send: {} -> {}", m, msg_list)
-        db.sent_time = int(time())
-        msg_id_qq: int = (
-            (
-                await self.qq.send_msg(
-                    message=msg_list,
-                    user_id=user_id,
-                    group_id=group_id,
-                )
-            )
-            .get("data", {})
-            .get("message_id", 0)
-        )
-        db.set((m.message_id, m.chat_id), msg_id_qq)
+        return msg_list
 
     @logger.catch
     async def cache_file_url(self, file_id: str, reverse=True) -> str:

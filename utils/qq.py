@@ -29,6 +29,7 @@ class Qbot:
             )
         return partial(self.call_gocq, name)
 
+    @logger.catch
     async def call_gocq(self, method: str, **kwargs) -> dict:
         """调用 gocqhttp 的 http api
 
@@ -45,6 +46,7 @@ class Qbot:
             logger.error(result)
             return {}
 
+    @logger.catch
     async def on_message(self, message: str | bytes):
         """处理接受的消息
 
@@ -62,6 +64,7 @@ class Qbot:
             logger.info(f"T<-Qu | Private-{d.user_id}: {d.raw_message}")
             await self.forward_to_tg(conf.forward.u[d.user_id], d)
 
+    @logger.catch
     async def ws_client(self):
         """websocket client，连接 gocqhttp 的服务端"""
         async with connect(self.ws) as ws:
@@ -91,41 +94,10 @@ class Qbot:
             d (DataModel): 传入的消息模型
         """
         if d.message and d.sender:
-            text, reply_id, imgs = "", None, []  # type:ignore
             name = escaped_md(d.sender.card or d.sender.nickname).strip()
-            for msg in d.message:
-                match msg.type:
-                    case "at":
-                        at = msg.data["qq"]
-                        if at == "all":
-                            at_name = "全体成员"
-                        else:
-                            at_info = (
-                                await self.get_group_member_info(
-                                    group_id=d.group_id, user_id=at
-                                )
-                            ).get("data", {})
-                            logger.debug(at_info)
-                            at_name = at_info.get("card") or at_info.get("nickname")
-                        text = f"{text}@{at_name} "
-                    case "text":
-                        text = f'{text}{msg.data["text"]} '
-                    case "face":
-                        text = f'{text}{facemap[msg.data["id"]]} '
-                    case "image":
-                        imgs.append(msg.data["url"])
-                    case "reply":
-                        reply_id: int = db.get_tg_msgid(msg.data["id"])[0]
-                    case "video":
-                        text = "[暂不支持视频消息]"
-                    case "forward":
-                        text = "[暂不支持合并转发消息]"
-                    case "record":
-                        text = "[暂不支持语音消息]"
-                    case _:
-                        logger.warning(f"[不支持的消息]: {msg.type}")
-            if imgs:
-                for img in imgs:
+            reply_id, text, img_list = await self.create_msg(d)
+            if img_list:
+                for img in img_list:
                     msg_id_tg = (
                         await self.tg.send_message(
                             chat_id=chat_id,
@@ -133,10 +105,8 @@ class Qbot:
                             parse_mode="MarkdownV2",
                         )
                     ).message_id
-                db.set((msg_id_tg, chat_id), d.message_id)  # type:ignore
-            if text:
-                logger.debug("-> Chat_id: {}", chat_id)
-                msg_id_tg: int = (
+            elif text:
+                msg_id_tg = (
                     await self.tg.send_message(
                         chat_id=chat_id,
                         reply_to_message_id=reply_id,
@@ -144,15 +114,59 @@ class Qbot:
                         parse_mode="MarkdownV2",
                     )
                 ).message_id
-                db.set((msg_id_tg, chat_id), d.message_id)  # type:ignore
         elif d.file:
             size = escaped_md(f"{d.file.size/1048576:.2f}")
             file_name = escaped_md(d.file.name)
             text = f"大小: {size}MB\n文件: [{(file_name)}]({d.file.url})"
-            print(
+            msg_id_tg = (
                 await self.tg.send_message(
                     chat_id=chat_id,
                     text=text,
                     parse_mode="MarkdownV2",
                 )
-            )
+            ).message_id
+        else:
+            return
+        db.set((msg_id_tg, chat_id), d.message_id)  # type:ignore
+
+    async def create_msg(self, d: DataModel) -> tuple:
+        """生成要发送的消息
+
+        Args:
+            d (DataModel): 传入的消息模型
+
+        Returns:
+            tuple: _description_
+        """
+        reply_id, text, img_list = None, "", []
+        for msg in d.message:  # type:ignore
+            match msg.type:
+                case "at":
+                    at = msg.data["qq"]
+                    if at == "all":
+                        at_name = "全体成员"
+                    else:
+                        at_info = (
+                            await self.get_group_member_info(
+                                group_id=d.group_id, user_id=at
+                            )
+                        ).get("data", {})
+                        at_name = at_info.get("card") or at_info.get("nickname")
+                    text = f"{text}@{at_name} "
+                case "text":
+                    text = f'{text}{msg.data["text"]} '
+                case "face":
+                    text = f'{text}{facemap[msg.data["id"]]} '
+                case "image":
+                    img_list.append(msg.data["url"])
+                case "reply":
+                    reply_id = db.get_tg_msgid(msg.data["id"])[0]
+                case "video":
+                    text = "[暂不支持视频消息]"
+                case "forward":
+                    text = "[暂不支持合并转发消息]"
+                case "record":
+                    text = "[暂不支持语音消息]"
+                case _:
+                    logger.warning(f"[不支持的消息]: {msg.type}")
+        return reply_id, text, img_list
