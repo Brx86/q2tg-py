@@ -90,9 +90,9 @@ class Qbot:
             chat_id (int): 消息所在群/用户对应的 telegram 群的 chai_id
             d (DataModel): 传入的消息模型
         """
-        if d.message:
+        if d.message and d.sender:
             text, reply_id, imgs = "", None, []  # type:ignore
-            name = escaped_md(d.sender.card or d.sender.nickname)  # type:ignore
+            name = escaped_md(d.sender.card or d.sender.nickname).strip()
             for msg in d.message:
                 match msg.type:
                     case "at":
