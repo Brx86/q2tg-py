@@ -52,12 +52,11 @@ class Qbot:
         d = DataModel.parse_raw(message)
         if d.self_id == d.user_id and abs(int(d.time) - db.sent_time) < 8:
             db.sent_time = 0
-            logger.info(f"Qsend: {d.raw_message}")
         elif d.group_id and (d.group_id in conf.forward.g):
-            logger.info(f"T<-Qg: {d.group_id}-{d.user_id}: {d.raw_message}")
+            logger.info(f"<- Group {d.group_id}-{d.user_id}: {d.raw_message}")
             await self.forward_to_tg(conf.forward.g[d.group_id], d)
         elif d.message_type == "private" and (d.user_id in conf.forward.u):
-            logger.info(f"T<-Qu: Private-{d.user_id}: {d.raw_message}")
+            logger.info(f"<- User {d.user_id}: {d.raw_message}")
             await self.forward_to_tg(conf.forward.u[d.user_id], d)
 
     @logger.catch
@@ -94,33 +93,27 @@ class Qbot:
             reply_id, text, img_list = await self.create_msg(d)
             if img_list:
                 for img in img_list:
-                    msg_id_tg = (
-                        await self.tg.send_message(
-                            chat_id=chat_id,
-                            text=f"*{user_name}*: [⁣⁣⁣图片]({img})",
-                            parse_mode="MarkdownV2",
-                        )
-                    ).message_id
-            elif text:
-                msg_id_tg = (
-                    await self.tg.send_message(
+                    msg_id_tg = await self.send_to_tg(
                         chat_id=chat_id,
-                        reply_to_message_id=reply_id,
-                        text=f"*{user_name}*:\n{escaped_md(text)}",
+                        text=f"*{user_name}*: [⁣⁣⁣图片]({img})",
                         parse_mode="MarkdownV2",
                     )
-                ).message_id
+            elif text:
+                msg_id_tg = await self.send_to_tg(
+                    chat_id=chat_id,
+                    reply_to_message_id=reply_id,
+                    text=f"*{user_name}*:\n{escaped_md(text)}",
+                    parse_mode="MarkdownV2",
+                )
         elif d.file:
             size = escaped_md(f"{d.file.size/1048576:.2f}")
             file_name = escaped_md(d.file.name)
             text = f"大小: {size}MB\n文件: [{(file_name)}]({d.file.url})"
-            msg_id_tg = (
-                await self.tg.send_message(
-                    chat_id=chat_id,
-                    text=text,
-                    parse_mode="MarkdownV2",
-                )
-            ).message_id
+            msg_id_tg = await self.send_to_tg(
+                chat_id=chat_id,
+                text=text,
+                parse_mode="MarkdownV2",
+            )
         else:
             return
         db.set((msg_id_tg, chat_id), d.message_id)  # type:ignore
@@ -167,3 +160,12 @@ class Qbot:
                 case _:
                     logger.warning(f"[不支持的消息]: {msg.type}")
         return reply_id, text, img_list
+
+    @logger.catch
+    async def send_to_tg(self, **kwargs):
+        for _ in range(3):
+            try:
+                return (await self.tg.send_message(**kwargs)).message_id
+            except Exception as e:
+                logger.error("Retrying {} times... {}", _, repr(e))
+                await asyncio.sleep(2)
