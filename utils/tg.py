@@ -3,6 +3,7 @@ from time import time
 
 from telegram import Bot, Message, Update
 from telegram.ext import Updater
+from telegram.error import TelegramError
 
 from .qq import Qbot
 from .tools import Msg, conf, db, logger
@@ -53,10 +54,13 @@ class Tbot:
                 self.bot = bot
                 async with (updater := Updater(bot, asyncio.Queue())):
                     q = await updater.start_polling(timeout=20, read_timeout=5)
+                    logger.success("Successful connection to '{}'", self.base_url)
                     while True:
                         update: Update = await q.get()
                         if update.message:
                             asyncio.create_task(self.on_message(bot, update.message))
+        except TelegramError:
+            logger.error("TelegramError: Invalid server response")
         except RuntimeError:
             await updater.stop()  # type:ignore
 
