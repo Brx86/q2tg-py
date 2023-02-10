@@ -39,10 +39,10 @@ class Tbot:
                 parse_mode="MarkdownV2",
             )
         elif m.chat_id in conf.forward.g:
-            logger.info("T->Qg | {}", m.text)
+            logger.info("T->Qg: {}", m.text)
             await self.forward_to_qq(m, group_id=conf.forward.g[m.chat_id])
         elif m.chat_id in conf.forward.u:
-            logger.info("T->Qu | {}", m.text)
+            logger.info("T->Qu: {}", m.text)
             await self.forward_to_qq(m, user_id=conf.forward.u[m.chat_id])
 
     @logger.catch

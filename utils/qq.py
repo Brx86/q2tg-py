@@ -56,12 +56,12 @@ class Qbot:
         d = DataModel.parse_raw(message)
         if d.self_id == d.user_id and abs(int(d.time) - db.sent_time) < 8:
             db.sent_time = 0
-            logger.info(f"Qsend | {d.raw_message}")
+            logger.info(f"Qsend: {d.raw_message}")
         elif d.group_id and (d.group_id in conf.forward.g):
-            logger.info(f"T<-Qg | {d.group_id}-{d.user_id}: {d.raw_message}")
+            logger.info(f"T<-Qg: {d.group_id}-{d.user_id}: {d.raw_message}")
             await self.forward_to_tg(conf.forward.g[d.group_id], d)
         elif d.message_type == "private" and (d.user_id in conf.forward.u):
-            logger.info(f"T<-Qu | Private-{d.user_id}: {d.raw_message}")
+            logger.info(f"T<-Qu: Private-{d.user_id}: {d.raw_message}")
             await self.forward_to_tg(conf.forward.u[d.user_id], d)
 
     @logger.catch
