@@ -32,7 +32,7 @@ class Sender(BaseModel):
     card: str | None
     level: str | None
     role: str | None
-    nickname: str
+    nickname: str = "anonymous"
     sex: str
     user_id: int
 
