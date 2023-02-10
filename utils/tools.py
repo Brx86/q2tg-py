@@ -66,10 +66,10 @@ class Database:
         self.qq[qq_msgid] = tg_msgid
 
     def get_qq_msgid(self, msgid: tuple[int, int]) -> int:
-        return self.tg[msgid]
+        return self.tg.get(msgid, 0)
 
     def get_tg_msgid(self, msgid: str) -> tuple[int, int]:
-        return self.qq[int(msgid)]
+        return self.qq.get(int(msgid), (0, 0))
 
 
 db = Database()
