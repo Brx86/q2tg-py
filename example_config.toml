@@ -1,5 +1,5 @@
 # 日志格式
-log_format = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{message}</level>"
+log_format = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level>\t| {message}"
 # 日志等级
 log_level = "INFO"
 # gocqhttp 的正向 websocket 地址与端口，形如 ws://ip:port
