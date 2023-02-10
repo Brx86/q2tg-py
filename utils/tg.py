@@ -24,7 +24,7 @@ class Tbot:
         self.bot_token, self.base_url = bot_token, base_url
 
     @logger.catch
-    async def on_message(self, bot: Bot, m: Message):
+    async def on_message(self, bot: Bot, m: Message, edit: bool = False):
         """处理接受的消息
 
         Args:
@@ -40,10 +40,10 @@ class Tbot:
             )
         elif m.chat_id in conf.forward.g:
             logger.info("T->Qg: {}", m.text)
-            await self.forward_to_qq(m, group_id=conf.forward.g[m.chat_id])
+            await self.forward_to_qq(m, group_id=conf.forward.g[m.chat_id], edit=edit)
         elif m.chat_id in conf.forward.u:
             logger.info("T->Qu: {}", m.text)
-            await self.forward_to_qq(m, user_id=conf.forward.u[m.chat_id])
+            await self.forward_to_qq(m, user_id=conf.forward.u[m.chat_id], edit=edit)
 
     @logger.catch
     async def start(self):
@@ -57,8 +57,9 @@ class Tbot:
                     logger.success("Successful connection to '{}'", self.base_url)
                     while True:
                         update: Update = await q.get()
-                        if update.message:
-                            asyncio.create_task(self.on_message(bot, update.message))
+                        if m := (update.message or update.edited_message):
+                            edit = bool(update.edited_message)
+                            asyncio.create_task(self.on_message(bot, m, edit))
         except TelegramError:
             logger.error("TelegramError: Invalid server response")
         except RuntimeError:
@@ -70,6 +71,7 @@ class Tbot:
         m: Message,
         user_id: int | None = None,
         group_id: int | None = None,
+        edit: bool = False,
     ):
         """将消息转发到 qq
 
@@ -78,14 +80,18 @@ class Tbot:
             user_id (int | None, optional): 要发送的用户id，默认为 None
             group_id (int | None, optional): 要发送的群id，默认为 None
         """
+        if edit:
+            msg_id_qq = db.get_qq_msgid((m.message_id, m.chat_id))
+            logger.debug(await self.qq.delete_msg(message_id=msg_id_qq))
+            logger.debug("删除消息：{}:{}", m.message_id, msg_id_qq)
+            if m.text.startswith("/rm "):
+                return
         msg_list = await self.create_msg_list(m)
         db.sent_time = int(time())
         msg_id_qq: int = (
             (
                 await self.qq.send_msg(
-                    message=msg_list,
-                    user_id=user_id,
-                    group_id=group_id,
+                    message=msg_list, user_id=user_id, group_id=group_id
                 )
             )
             .get("data", {})
