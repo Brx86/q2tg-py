@@ -23,10 +23,6 @@ class Qbot:
 
     def __getattr__(self, name: str):
         """魔术方法，调用任意api"""
-        if name.startswith("__") and name.endswith("__"):
-            logger.error(
-                f"'{self.__class__.__name__}' object has no attribute '{name}'"
-            )
         return partial(self.call_gocq, name)
 
     @logger.catch
@@ -94,14 +90,14 @@ class Qbot:
             d (DataModel): 传入的消息模型
         """
         if d.message and d.sender:
-            name = escaped_md(d.sender.card or d.sender.nickname).strip()
+            user_name = escaped_md(d.sender.card or d.sender.nickname, extra=True)
             reply_id, text, img_list = await self.create_msg(d)
             if img_list:
                 for img in img_list:
                     msg_id_tg = (
                         await self.tg.send_message(
                             chat_id=chat_id,
-                            text=f"*{name}*: [⁣⁣⁣图片]({img})",
+                            text=f"*{user_name}*: [⁣⁣⁣图片]({img})",
                             parse_mode="MarkdownV2",
                         )
                     ).message_id
@@ -110,7 +106,7 @@ class Qbot:
                     await self.tg.send_message(
                         chat_id=chat_id,
                         reply_to_message_id=reply_id,
-                        text=f"*{name}*:\n{escaped_md(text)}",
+                        text=f"*{user_name}*:\n{escaped_md(text)}",
                         parse_mode="MarkdownV2",
                     )
                 ).message_id
@@ -129,6 +125,7 @@ class Qbot:
             return
         db.set((msg_id_tg, chat_id), d.message_id)  # type:ignore
 
+    @logger.catch
     async def create_msg(self, d: DataModel) -> tuple:
         """生成要发送的消息
 
