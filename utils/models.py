@@ -38,9 +38,10 @@ class Sender(BaseModel):
 
 
 class DataModel(BaseModel):
+    post_type: str | None
+    notice_type: str | None
     time: int
     self_id: int | None
-    post_type: str | None
     status: dict | None
     message_type: str | None
     meta_event_type: str | None
@@ -51,4 +52,3 @@ class DataModel(BaseModel):
     message: list[Message] | None
     message_id: int | None = 0
     file: File | None
-    echo: str | None

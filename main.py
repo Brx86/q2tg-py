@@ -15,6 +15,7 @@ import asyncio
 from utils import conf, logger, Qbot, Tbot
 
 
+@logger.catch
 async def main():
     qbot = Qbot(conf.qq_ws, conf.qq_http)
     tbot = Tbot(conf.tg_token, conf.tg_api)

@@ -50,8 +50,9 @@ class Qbot:
             message (str | bytes): websocket client 接受到的数据
         """
         d = DataModel.parse_raw(message)
-        if d.self_id == d.user_id and abs(int(d.time) - db.sent_time) < 8:
-            db.sent_time = 0
+        if db.sent and d.post_type == "message_sent":
+            logger.debug("Sent: {}", d.raw_message)
+            db.sent = False
         elif d.group_id and (d.group_id in conf.forward.g):
             logger.info(f"<- Group {d.group_id}-{d.user_id}: {d.raw_message}")
             await self.forward_to_tg(conf.forward.g[d.group_id], d)

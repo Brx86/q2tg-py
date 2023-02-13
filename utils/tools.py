@@ -60,7 +60,7 @@ class Database:
         self.tg: dict[tuple[int, int], int] = {}
         self.qq: dict[int, tuple[int, int]] = {}
         self.file_cache: dict[str, tuple[str, str]] = {}
-        self.sent_time: int = 0
+        self.sent: bool = False
 
     def set(self, tg_msgid: tuple[int, int], qq_msgid: int) -> None:
         self.tg[tg_msgid] = qq_msgid

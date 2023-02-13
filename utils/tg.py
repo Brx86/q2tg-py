@@ -82,12 +82,12 @@ class Tbot:
         """
         if edit:
             msg_id_qq = db.get_qq_msgid((m.message_id, m.chat_id))
-            if (await self.qq.delete_msg(message_id=msg_id_qq))["retcode"] == 0:
-                logger.debug("Delete：{}:{}", m.message_id, msg_id_qq)
+            r = await self.qq.delete_msg(message_id=msg_id_qq)
+            logger.debug(r if r["retcode"] else f"Delete：{m.message_id}:{msg_id_qq}")
             if m.text.startswith("/rm "):
                 return
         msg_list = await self.create_msg_list(m)
-        db.sent_time = int(time())
+        db.sent = True
         msg_id_qq: int = (
             (
                 await self.qq.send_msg(
