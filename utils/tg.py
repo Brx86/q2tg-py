@@ -80,10 +80,9 @@ class Tbot:
             user_id (int | None, optional): 要发送的用户id，默认为 None
             group_id (int | None, optional): 要发送的群id，默认为 None
         """
-        if edit:
-            msg_id_qq = db.get_qq_msgid((m.message_id, m.chat_id))
+        if edit and (msg_id_qq := db.get_qq_msgid((m.message_id, m.chat_id))):
             r = await self.qq.delete_msg(message_id=msg_id_qq)
-            logger.debug(r if r["retcode"] else f"Delete：{m.message_id}:{msg_id_qq}")
+            logger.info(r if r["retcode"] else f"Delete：{m.message_id}:{msg_id_qq}")
             if m.text.startswith("/rm "):
                 return
         msg_list = await self.create_msg_list(m)
