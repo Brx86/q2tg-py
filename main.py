@@ -17,8 +17,8 @@ from utils import conf, logger, Qbot, Tbot
 
 @logger.catch
 async def main():
-    qbot = Qbot(conf.qq_ws, conf.qq_http)
     tbot = Tbot(conf.tg_token, conf.tg_api)
+    qbot = Qbot(conf.qq_ws, conf.qq_http)
     asyncio.create_task(tbot.start())
     await qbot.start()
 
@@ -28,3 +28,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         logger.warning("Exiting...")
+
