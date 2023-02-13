@@ -23,7 +23,7 @@ logger.add(base_dir / f"logs/{time.strftime('%Y-%m-%d')}.log", enqueue=True)
 def escaped_md(text: str = "", extra: bool = False) -> str:
     escape_chars = r"\_*[]()~`>#+-=|{}.!"
     new_text = re.sub(f"([{re.escape(escape_chars)}])", r"\\\1", text)
-    return new_text.strip().replace("/", "|") if extra is True else new_text
+    return new_text.strip().replace(".", "·") if extra is True else new_text
 
 
 class Msg:
