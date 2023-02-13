@@ -53,10 +53,11 @@ python == 3.10
 ## Bug列表
 - [x] 发送 telegram 消息失败时触发 TelegramError
 - [x] 查询不到历史消息时触发 KeyError
-- [ ] 部分特殊字符不会被 escape
-- [ ] telegram 编辑重发的消息可能被转发回来
-- [ ] telegram 发送的图片消息可能被转发回来
-- [ ] 用户名里的链接可能被识别为网址，触发自动预览
+- [x] 部分特殊字符不会被 escape
+- [x] telegram 编辑重发的消息可能被转发回来
+- [x] telegram 发送的图片消息可能被转发回来
+- [x] 用户名里的链接可能被识别为网址，触发自动预览
+- [ ] 转发失败时触发 UnboundLocalError
 - [ ] 待补充
 
 ## 效果展示
