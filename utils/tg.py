@@ -46,7 +46,7 @@ class Tbot:
             await self.forward_to_qq(m, user_id=u, edit=edit)
 
     @logger.catch
-    async def start(self):
+    async def run(self):
         """运行bot，接受并处理消息"""
         self.qq = Qbot(conf.qq_ws, conf.qq_http)
         try:

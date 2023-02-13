@@ -19,13 +19,23 @@ from utils import conf, logger, Qbot, Tbot
 async def main():
     tbot = Tbot(conf.tg_token, conf.tg_api)
     qbot = Qbot(conf.qq_ws, conf.qq_http)
-    asyncio.create_task(tbot.start())
-    await qbot.start()
+    loop = asyncio.get_event_loop()
+    loop.create_task(tbot.run())
+    loop.create_task(qbot.run())
+    while True:
+        try:
+            cmd = await loop.run_in_executor(None, input, ">")
+            match cmd:
+                case "h" | "help":
+                    logger.warning("Commands: help, config, exit")
+                case "c" | "config":
+                    logger.warning(conf)
+                case "q" | "quit" | "exit":
+                    raise EOFError
+        except (KeyboardInterrupt, EOFError):
+            logger.warning("Exiting...")
+            return
 
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        logger.warning("Exiting...")
-
+    asyncio.run(main())

@@ -70,7 +70,7 @@ class Qbot:
                 asyncio.create_task(self.on_message(message))
 
     @logger.catch
-    async def start(self):
+    async def run(self):
         """运行bot，接受并处理消息"""
         self.tg = Bot(token=conf.tg_token, base_url=conf.tg_api)
         await self.tg.initialize()
