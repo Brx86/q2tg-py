@@ -89,6 +89,7 @@ class Qbot:
             chat_id (int): 消息所在群/用户对应的 telegram 群的 chai_id
             d (DataModel): 传入的消息模型
         """
+        msg_id_tg = None
         if d.message and d.sender:
             user_name = escaped_md(d.sender.card or d.sender.nickname, extra=True)
             reply_id, text, img_list = await self.create_msg(d)
@@ -117,7 +118,8 @@ class Qbot:
             )
         else:
             return
-        db.set((msg_id_tg, chat_id), d.message_id)  # type:ignore
+        if msg_id_tg and d.message_id:
+            db.set((msg_id_tg, chat_id), d.message_id)
 
     @logger.catch
     async def create_msg(self, d: DataModel) -> tuple:
@@ -168,5 +170,5 @@ class Qbot:
             try:
                 return (await self.tg.send_message(**kwargs)).message_id
             except Exception as e:
-                logger.error("Retrying {} times... {}", _, repr(e))
+                logger.error("Retrying {} times... {}", _ + 1, repr(e))
                 await asyncio.sleep(2)

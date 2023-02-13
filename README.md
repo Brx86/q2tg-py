@@ -57,7 +57,7 @@ python == 3.10
 - [x] telegram 编辑重发的消息可能被转发回来
 - [x] telegram 发送的图片消息可能被转发回来
 - [x] 用户名里的链接可能被识别为网址，触发自动预览
-- [ ] 转发失败时触发 UnboundLocalError
+- [x] 转发失败时触发 UnboundLocalError
 - [ ] 待补充
 
 ## 效果展示
