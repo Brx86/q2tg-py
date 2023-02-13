@@ -1,6 +1,7 @@
 venv
 log.txt
 test*
+example*
 .history
 config.toml
 bot/*
