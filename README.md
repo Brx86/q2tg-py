@@ -4,19 +4,28 @@ QQ 群与 Telegram 群相互转发的桥接机器人，适合tg重度用户单�
 
 ## 如何部署
 
-1. 环境配置：
-python == 3.10
+1. 环境配置：python == 3.10
+
+    如果python版本已经是3.10，建议使用 venv
     ```bash
     python -m venv venv --upgrade-deps
     source venv/bin/activate
     pip install -r requirements.txt
     ```
-2. 运行一个 [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/releases/latest) 实例，配置文件可参考 `bot/example_config.yml`
-3. 参考 `example_config.toml` ，填写 `config.toml` （如果不知道群的 ID，可以先不配置转发匹配，运行 bot，在需要查询 ID 的 TG 群里发送 /chatid 指令即可获得 ID）
+    如果系统默认python版本非3.10，建议使用 conda
+    ```bash
+    conda create -n q2tg python=3.10 -y
+    conda activate q2tg
+    pip install -r requirements.txt
+    ```
+
+2. 运行一个 [go-cqhttp](https://github.com/Mrs4s/go-cqhttp/releases/latest) 实例，配置文件可参考 `bot/example_config.yml`，注意启用 http 和正向 ws 通信
+3. 参考 `example_config.toml` ，填写 `config.toml` （如果不知道群的 ID，可以先不配置转发匹配，直接运行 bot，在需要查询 ID 的 TG 群里发送 /chatid 指令即可获得 ID）
 4. 开始运行
     ```bash
     python main.py
     ```
+    输入 Ctrl-D 或 `q` 回车退出
 
 ## 支持的消息类型
 
@@ -38,8 +47,11 @@ python == 3.10
 - [ ] 语音（双向）
 - [ ] JSON/XML 卡片
 - [ ] 转发多条消息记录
-- [x] TG 编辑消息（撤回再重发）
+- [x] TG 编辑消息，QQ 撤回并重发
 - [ ] 双向撤回消息
+  - [ ] QQ 撤回消息，TG 显示删除线
+  - [ ] TG 删除消息，QQ 撤回（因bot无法接收删除事件，目前实现方式为编辑消息内容为 `/rm` ）
+- [ ] 快速+1功能
 
 ## 其他大饼
 - [x] 做成类似 oicq-http 的可交互 cli（初步）
