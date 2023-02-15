@@ -39,7 +39,7 @@ class Sender(BaseModel):
 
 class DataModel(BaseModel):
     post_type: str | None
-    notice_type: str | None
+    notice_type: str | None = ""
     time: int
     self_id: int | None
     status: dict | None

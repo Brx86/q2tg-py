@@ -53,12 +53,14 @@ class Qbot:
         if db.sent and d.post_type == "message_sent":
             logger.debug("Sent: {}", d.raw_message)
             db.sent = False
-        elif d.group_id and (d.group_id in conf.forward.g):
+        elif d.message_type == "group" and (d.group_id in conf.forward.g):
             logger.info(f"<- Group {d.group_id}-{d.user_id}: {d.raw_message}")
             await self.forward_to_tg(conf.forward.g[d.group_id], d)
         elif d.message_type == "private" and (d.user_id in conf.forward.u):
             logger.info(f"<- User {d.user_id}: {d.raw_message}")
             await self.forward_to_tg(conf.forward.u[d.user_id], d)
+        elif "recall" in d.notice_type and d.message_id in db.qq:  # type:ignore
+            await self.recall_msg(d.message_id)
 
     @logger.catch
     async def ws_client(self):
@@ -100,7 +102,7 @@ class Qbot:
                         text=f"*{user_name}*: [⁣⁣⁣图片]({img})",
                         parse_mode="MarkdownV2",
                     )
-            elif text:
+            if text:
                 msg_id_tg = await self.send_to_tg(
                     chat_id=chat_id,
                     reply_to_message_id=reply_id,
@@ -172,3 +174,11 @@ class Qbot:
             except Exception as e:
                 logger.error("Retrying {} times... {}", _ + 1, repr(e))
                 await asyncio.sleep(2)
+
+    @logger.catch
+    async def recall_msg(self, qq_msgid):
+        msg_list = (await self.get_msg(message_id=qq_msgid))["data"]["message"]
+        raw_message = " ".join([m["data"].get("text", "") for m in msg_list])
+        logger.info(f"<- Delete msg {qq_msgid}: {raw_message}")
+        tg_msgid, chat_id = db.qq[qq_msgid]
+        await self.tg.delete_message(chat_id=chat_id, message_id=tg_msgid)
