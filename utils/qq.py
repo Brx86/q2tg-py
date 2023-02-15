@@ -60,7 +60,8 @@ class Qbot:
             logger.info(f"<- User {d.user_id}: {d.raw_message}")
             await self.forward_to_tg(conf.forward.u[d.user_id], d)
         elif "recall" in d.notice_type and d.message_id in db.qq:  # type:ignore
-            await self.recall_msg(d.message_id)
+            if not conf.anti_recall:
+                await self.recall_msg(d.message_id)
 
     @logger.catch
     async def ws_client(self):

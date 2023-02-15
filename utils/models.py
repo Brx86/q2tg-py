@@ -15,6 +15,7 @@ class Config(BaseModel):
     tg_api: str
     tg_token: str
     forward: Forward
+    anti_recall: bool = False
 
 
 class Message(BaseModel):
