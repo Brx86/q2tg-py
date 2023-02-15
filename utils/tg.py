@@ -83,7 +83,7 @@ class Tbot:
         if edit and (msg_id_qq := db.get_qq_msgid((m.message_id, m.chat_id))):
             r = await self.qq.delete_msg(message_id=msg_id_qq)
             logger.info(r if r["retcode"] else f"Delete：{m.message_id}:{msg_id_qq}")
-            if m.text.startswith("/rm "):
+            if m.text.startswith("/rm"):
                 return
         msg_list = await self.create_msg_list(m)
         db.sent = True
