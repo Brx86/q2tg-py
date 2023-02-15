@@ -87,15 +87,10 @@ class Tbot:
                 return
         msg_list = await self.create_msg_list(m)
         db.sent = True
-        msg_id_qq: int = (
-            (
-                await self.qq.send_msg(
-                    message=msg_list, user_id=user_id, group_id=group_id
-                )
-            )
-            .get("data", {})
-            .get("message_id", 0)
+        result = await self.qq.send_msg(
+            message=msg_list, user_id=user_id, group_id=group_id
         )
+        msg_id_qq: int = result.get("data", {}).get("message_id", 0)
         db.set((m.message_id, m.chat_id), msg_id_qq)
 
     @logger.catch
